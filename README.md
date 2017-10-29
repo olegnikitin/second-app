@@ -1,0 +1,1 @@
+npm run build - for building to production
