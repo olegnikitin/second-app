@@ -12,19 +12,7 @@ class User extends Component {
             phone: props.user.phone
         };
 
-        this.updateUser = this.updateUser.bind(this);//todo: move to App
         this.deleteUser = this.deleteUser.bind(this);
-    }
-
-    updateUser(event) {
-        event.preventDefault();
-
-        axios.put("http://localhost:8081/API/users/")
-            .then((response) => {
-                this.setState(response);
-            }).catch(() => {
-            console.log("user " + this.state.id + " wasn't updated")
-        })
     }
 
     deleteUser(event) {
@@ -32,7 +20,7 @@ class User extends Component {
 
         axios.delete("http://localhost:8081/API/users/" + this.state.id)
             .then(() => {
-                this.setState({});
+                this.setState({id: undefined});
             })
             .catch(() => {
                 console.log("user " + this.state.id + " wasn't removed")
@@ -51,7 +39,6 @@ class User extends Component {
                 <span className="User-phone">{this.state.phone}</span>
                 <span className="User-modifiers">
                     <button className="button-user-update" onClick={this.deleteUser}>Delete</button>
-                    <button className="button-user-delete" onClick={this.updateUser}>Update</button>
                 </span>
             </div>
         );

@@ -8,6 +8,7 @@ class App extends Component {
         super(props);
 
         this.createUser = this.createUser.bind(this);
+        this.updateUser = this.updateUser.bind(this);
     }
 
     createUser(event) {
@@ -22,14 +23,50 @@ class App extends Component {
                 phone: this.refs.phone.value,
             })
             .then(response => {
-                self.setState((prevState, props) => ({
-                    users: prevState.users.slice().push(response.data)
+                const newUsers = self.state.users.slice();
+                newUsers.push(response.data);
+
+                self.setState(() => ({
+                    users: newUsers
                 }));
             }).catch(() => {
                 console.log("user wasn't created")
         });
 
         this.refs.userForm.reset();
+    }
+
+    updateUser(event) {
+        event.preventDefault();
+
+        const self = this;
+
+        const requiredUserId = this.state.users.find(user => {
+            if (user.name === this.refs.name.value)
+                return user.id;
+        }).id;
+
+        //can be resolved if it is not found
+        axios.put("http://localhost:8081/API/users/",
+            {
+                id: requiredUserId,
+                name: this.refs.name.value,
+                email: this.refs.email.value,
+                phone: this.refs.phone.value
+            }).then((response) => {
+                self.setState(() => ({
+                    users: self.state.users.slice().map(user => {
+                        if (user.id === response.data.id) {
+                            user.name = response.data.name;
+                            user.email = response.data.email;
+                            user.phone = response.data.phone;
+                        }
+                        return user;
+                    })
+                }));
+            }).catch((e) => {
+            console.log("user " + this.state.id + " wasn't updated")
+        })
     }
 
     componentDidMount() {
@@ -53,10 +90,11 @@ class App extends Component {
         return (
             <div className="App">
                 <form ref="userForm">
-                    <input type="text" id="user-name-input" ref="name" placeholder="name"/>
+                    <input type="text" id="user-name-input" ref="name" placeholder="name (is used for update)"/>
                     <input type="text" id="user-email-input" ref="email" placeholder="email"/>
                     <input type="text" id="user-email-phone" ref="phone" placeholder="phone"/>
                     <button onClick={this.createUser}>Add user</button>
+                    <button onClick={this.updateUser}>Send user for update</button>
                 </form>
 
                 {this.state.users.map((user => {
