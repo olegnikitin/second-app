@@ -19,5 +19,9 @@
     "react"
   ],
   "author": "olegnikitin",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/olegnikitin/second-app.git"
+  }
 }
